@@ -1,8 +1,62 @@
 from bs4 import BeautifulSoup
 import requests
+from plants import Plant
+import csv
 
 URL = "https://plantdatabase.kpu.ca/plant/siteIndex"
+BASE_URL = "https://plantdatabase.kpu.ca"
 page = requests.get(URL)
 soup = BeautifulSoup(page.content, 'html.parser')
 
-print(soup.prettify())
+common_names = soup.find_all('span', class_="common_name")
+plant_links = soup.find_all('a', class_="preview")
+
+plant_keys = ['Growth Rate:',
+              'Exposure:',
+              'Soil/ Growing Medium:',
+              'Water Use:',
+              'Hardiness Rating:']
+
+plant_list = {}
+
+for plant in plant_links:
+    if len(plant_list) >= 10: break
+    name = plant.find_next('td').text
+    print(name)
+    link = str(plant['href'])
+    plant_page = requests.get(BASE_URL+link)
+    info = BeautifulSoup(plant_page.content, 'html.parser')
+    page_info = info.find_all('td')
+    growth_rate = ""
+    exposure = ""
+    soil = ""
+    hardiness = ""
+    water = ""
+    for i in page_info:
+        if i.text in plant_keys:
+            if i.text == 'Growth Rate:':
+                growth_rate = i.find_next('td').text
+            elif i.text == 'Exposure:':
+                exposure = i.find_next('td').text
+            elif i.text == 'Soil/ Growing Medium:':
+                soil = i.find_next('td').text
+            elif i.text == 'Hardiness Rating:':
+                hardiness = i.find_next('td').text
+            elif i.text == 'Water Use:':
+                water = i.find_next('td').text
+        if water == "":
+            water = "NA"
+
+    p = Plant(name, growth_rate, hardiness, exposure, soil, water)
+    plant_list[p.name] = {
+        'Growth Rate': growth_rate,
+        'Exposure'   : ' '.join(exposure.split()),
+        'Soil'       : ' '.join(soil.split()),
+        'Hardinss'   : hardiness,
+        'Water'      : ' '.join(water.split())
+    }
+
+with open('plants.csv', 'w', newline="") as csv_file:
+    writer = csv.writer(csv_file)
+    for key, value in plant_list.items():
+       writer.writerow([key, value])

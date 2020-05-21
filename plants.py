@@ -2,10 +2,13 @@ import datetime
 
 class Plant:
 
-    def __init__(self, name, type, description):
+    def __init__(self, name, growth_rate, hardiness, exposure, soil, water):
         self.name = name
-        self.type = type
-        self.description = description
+        self.growth_rate = growth_rate
+        self.hardiness = hardiness
+        self.exposure = exposure
+        self.soil = soil
+        self.water = water
         self.plant_date = datetime.datetime.now()
 
     def describe_self(self):
@@ -19,3 +22,4 @@ class Plant:
 
     def edit_description(self):
         description = input('Enter new description: ')
+        self.description = description
