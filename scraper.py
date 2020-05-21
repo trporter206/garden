@@ -20,7 +20,6 @@ plant_keys = ['Growth Rate:',
 plant_list = {}
 
 for plant in plant_links:
-    if len(plant_list) >= 10: break
     name = plant.find_next('td').text
     print(name)
     link = str(plant['href'])
@@ -49,14 +48,21 @@ for plant in plant_links:
 
     p = Plant(name, growth_rate, hardiness, exposure, soil, water)
     plant_list[p.name] = {
-        'Growth Rate': growth_rate,
+        'Growth Rate': ' '.join(growth_rate.split()),
         'Exposure'   : ' '.join(exposure.split()),
         'Soil'       : ' '.join(soil.split()),
-        'Hardinss'   : hardiness,
+        'Hardiness'  : ' '.join(hardiness.split()),
         'Water'      : ' '.join(water.split())
     }
 
-with open('plants.csv', 'w', newline="") as csv_file:
-    writer = csv.writer(csv_file)
+with open('plants.csv', mode='w') as csv_file:
+    fields = ['name', 'growth_rate', 'exposure', 'soil', 'hardiness', 'water']
+    writer = csv.DictWriter(csv_file, fieldnames= fields)
+    writer.writeheader()
     for key, value in plant_list.items():
-       writer.writerow([key, value])
+       writer.writerow({'name'       : key,
+                        'growth_rate': value['Growth Rate'],
+                        'exposure'   : value['Exposure'],
+                        'soil'       : value['Soil'],
+                        'hardiness'  : value['Hardiness'],
+                        'water'      : value['Water']})
