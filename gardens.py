@@ -1,10 +1,34 @@
+import csv
+import pprint
+import datetime
+import struct
+
+def searchPlant(name):
+    with open('plants.csv', mode='r') as file:
+        csv_reader = csv.reader(file, delimiter=',')
+        for row in csv_reader:
+            if row[0] == name:
+                return row
+
 class Garden:
     def __init__(self, name):
         self.name = name
         self.plants = []
 
-    def add_plant(self, plant):
-        self.plants.append(plant)
+    def add_plant(self, plant): #TODO
+        # plant = input('Plant name: ')
+        plant_info = searchPlant(plant)
+        if plant_info == None:
+            return "Plant not in database"
+        else:
+            new_plant = Plant(plant_info[0],
+                              plant_info[1],
+                              plant_info[2],
+                              plant_info[3],
+                              plant_info[4],
+                              plant_info[5])
+            self.plants.append(new_plant)
+            print("plant added to garden")
 
     def remove_plant(self, plant):
         if plant in self.plants:
@@ -14,13 +38,23 @@ class Garden:
         print("Your garden has "+str(len(self.plants))+" plants")
         for p in self.plants:
             print(p.name)
+            pprint.pprint(vars(p))
 
-    def potted_plants(self):
-        potted_plants
-        if len(self.plants) == 0:
-            return "No plants in garden!"
-        else:
-            for p in self.plants:
-                if p.potted is True:
-                    potted_plants.append(p)
-        return potted_plants
+class Plant(Garden):
+
+    def __init__(self, name, growth_rate, exposure, soil, hardiness, water):
+        self.name = name
+        self.growth_rate = growth_rate
+        self.hardiness = hardiness
+        self.exposure = exposure
+        self.soil = soil
+        self.water = water
+        self.plant_date = datetime.datetime.now()
+        self.notes = ""
+
+    def describe(self):
+        dir(self)
+
+    def edit_notes(self):
+        note = input('Enter new note: ')
+        self.notes = note

@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
-from plants import Plant
+from gardens import *
 import csv
 
 URL = "https://plantdatabase.kpu.ca/plant/siteIndex"
