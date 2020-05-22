@@ -13,10 +13,9 @@ def searchPlant(name):
 class Garden:
     def __init__(self, name):
         self.name = name
-        self.plants = []
+        self.plants = {}
 
-    def add_plant(self):
-        plant = input('Plant to add: ')
+    def add_plant(self, plant):
         plant_info = searchPlant(plant)
         if plant_info == None:
             print("Plant not in database")
@@ -27,17 +26,14 @@ class Garden:
                               plant_info[3],
                               plant_info[4],
                               plant_info[5])
-            self.plants.append(new_plant)
+            self.plants[plant_info[0]] = new_plant
             print("Your "+plant+" was added to "+self.name)
 
-    def remove_plant(self):
-        plant = input('Plant to remove: ')
-        for p in self.plants:
-            if plant == p.name:
-                self.plants.remove(p)
-                del p
-                print(plant+" removed from "+self.name)
-                break
+    def remove_plant(self, plant):
+        if plant in self.plants:
+            p = self.plants.pop(plant)
+            del p
+            print(plant+" removed from "+self.name)
         else:
             print(plant+" not found in "+self.name)
 
@@ -49,6 +45,15 @@ class Garden:
         for p in self.plants:
             print(p.name)
             # pprint.pprint(vars(p))
+
+    def filter_plants(self, field, search):
+        filtered_plants = []
+        for key, value in self.plants.items():
+            print(key, value)
+            if getattr(value, field) == search:
+                filtered_plants.append(value.name)
+        print("Found "+str(len(filtered_plants))+" plants")
+        return filtered_plants
 
 class Plant(Garden):
 

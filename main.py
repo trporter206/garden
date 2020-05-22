@@ -7,8 +7,9 @@ from gardens import *
 #     for row in csv_reader:
 #         print(row[0])
 
-garden = Garden("My garden")
-garden.add_plant()
-garden.list_plants()
-garden.remove_plant()
-garden.list_plants()
+garden = Garden("test garden")
+garden.add_plant('Korean fir')
+garden.add_plant('common aster')
+garden.add_plant('beautyberry ')
+
+print(garden.filter_plants('water','Moderate'))

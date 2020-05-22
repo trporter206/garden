@@ -60,7 +60,7 @@ with open('plants.csv', mode='w') as csv_file:
     writer = csv.DictWriter(csv_file, fieldnames= fields)
     writer.writeheader()
     for key, value in plant_list.items():
-       writer.writerow({'name'       : key,
+       writer.writerow({'name'       : ' '.join(key.split()),
                         'growth_rate': value['Growth Rate'],
                         'exposure'   : value['Exposure'],
                         'soil'       : value['Soil'],
