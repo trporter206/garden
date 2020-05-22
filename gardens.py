@@ -15,11 +15,11 @@ class Garden:
         self.name = name
         self.plants = []
 
-    def add_plant(self, plant): #TODO
-        # plant = input('Plant name: ')
+    def add_plant(self):
+        plant = input('Plant to add: ')
         plant_info = searchPlant(plant)
         if plant_info == None:
-            return "Plant not in database"
+            print("Plant not in database")
         else:
             new_plant = Plant(plant_info[0],
                               plant_info[1],
@@ -28,17 +28,27 @@ class Garden:
                               plant_info[4],
                               plant_info[5])
             self.plants.append(new_plant)
-            print("plant added to garden")
+            print("Your "+plant+" was added to "+self.name)
 
-    def remove_plant(self, plant):
-        if plant in self.plants:
-            self.plants.remove(plant)
+    def remove_plant(self):
+        plant = input('Plant to remove: ')
+        for p in self.plants:
+            if plant == p.name:
+                self.plants.remove(p)
+                del p
+                print(plant+" removed from "+self.name)
+                break
+        else:
+            print(plant+" not found in "+self.name)
 
     def list_plants(self):
+        if len(self.plants) == 0:
+            print("no plants in your garden!")
+            return
         print("Your garden has "+str(len(self.plants))+" plants")
         for p in self.plants:
             print(p.name)
-            pprint.pprint(vars(p))
+            # pprint.pprint(vars(p))
 
 class Plant(Garden):
 
@@ -53,7 +63,7 @@ class Plant(Garden):
         self.notes = ""
 
     def describe(self):
-        dir(self)
+        pprint.pprint(vars(self))
 
     def edit_notes(self):
         note = input('Enter new note: ')

@@ -8,5 +8,7 @@ from gardens import *
 #         print(row[0])
 
 garden = Garden("My garden")
-print(garden.add_plant("Korean fir"))
+garden.add_plant()
+garden.list_plants()
+garden.remove_plant()
 garden.list_plants()
