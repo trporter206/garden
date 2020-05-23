@@ -70,6 +70,9 @@ class Plant(Garden):
     def describe(self):
         pprint.pprint(vars(self))
 
-    def edit_notes(self):
-        note = input('Enter new note: ')
+    def edit_notes(self, note):
         self.notes = note
+
+    def age(self):
+        age = datetime.datetime.now() - self.plant_date
+        return age

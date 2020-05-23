@@ -1,5 +1,6 @@
 import unittest
 from gardens import Garden, Plant
+from datetime import timedelta
 
 class TestGardenMethods(unittest.TestCase):
     def setUp(self):
@@ -29,3 +30,20 @@ class TestGardenMethods(unittest.TestCase):
         self.assertEqual(len(f1), 1)
         f2 = self.garden.filter_plants('water','Moderate')
         self.assertEqual(len(f2), 2)
+
+class TestPlantMethods(unittest.TestCase):
+    def setUp(self):
+        self.plant = Plant('Test Plant', 'Fast',
+                                    'Full Sun',
+                                    'Well Drained',
+                                    'Zone 1',
+                                    'Heavy')
+
+    def test_describe(self):
+        self.assertEqual(self.plant.notes, "")
+        old_note = self.plant.notes
+        self.plant.edit_notes("This is really nice")
+        self.assertNotEqual(old_note, self.plant.notes)
+
+    def test_age(self):
+        self.assertTrue(self.plant.age() > timedelta(seconds=0))
