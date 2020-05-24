@@ -31,6 +31,13 @@ class TestGardenMethods(unittest.TestCase):
         f2 = self.garden.filter_plants('water','Moderate')
         self.assertEqual(len(f2), 2)
 
+    def test_clearplants(self):
+        self.garden.clear_plants()
+        self.assertEqual(len(self.garden.plants), 0)
+
+    def test_stats(self): # TODO
+        pass
+
 class TestPlantMethods(unittest.TestCase):
     def setUp(self):
         self.plant = Plant('Test Plant', 'Fast',
