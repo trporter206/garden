@@ -3,18 +3,20 @@ import pprint
 import datetime
 import struct
 import pprint
+import math
 
 gr_values = {''         : 0,
              'Slow'     : 1,
              'Moderate' : 2,
              'Fast'     : 3
              }
-e_values = {''                   : 0,
-            'Sheltered'          : 1,
-            'Deep shade'         : 2,
-            'Filtered shade'     : 3,
-            'Part sun/part shade': 4,
-            'Full sun'           : 5,
+e_values = {''                                 : 0,
+            'Sheltered'                        : 1,
+            'Deep shade'                       : 2,
+            'Filtered shade'                   : 3,
+            'Part sun/part shade'              : 4,
+            'Full sun only if soil kept moist' : 5,
+            'Full sun'                         : 6,
             }
 s_values = {''                         : 0,
             'Acidic'                   : 1,
@@ -35,16 +37,17 @@ h_values = {'Zone 1: (below -46 C)'   : 1,
             'Zone 9: (-7 to -1 C)'    : 9,
             'Zone 10: (-1 to 4 C)'    : 10,
             'Zone 11: (above 4 C)'    : 11}
-w_values = {'NA'                     : 0,
-            'Low'                    : 1,
-            'Summer dry, Winter dry' : 2,
-            'Moderate'               : 3,
-            'High'                   : 4,
-            'Wetlands'               : 5,
-            'Aquatic'                : 6}
+w_values = {''           : 0,
+            'NA'         : 0,
+            'Low'        : 1,
+            'Summer dry' : 2,
+            'Moderate'   : 3,
+            'High'       : 4,
+            'Wetlands'   : 5,
+            'Aquatic'    : 6}
 
 def searchPlant(name):
-    with open('plants.csv', mode='r') as file:
+    with open('plantList.csv', mode='r') as file:
         csv_reader = csv.reader(file, delimiter=',')
         for row in csv_reader:
             if row[0] == name:
@@ -59,28 +62,44 @@ def plant_facts(plant):
     print(f"Hardiness: {plant[4]}")
     print(f"Water use: {plant[5]}")
 
+def minimumSizeHelper(plants):
+    size_needed = 0
+    if len(plants) == 0:
+        return 0
+    else:
+        for plant in plants:
+            print(plant)
+            size_needed+=plants[plant].volume
+    return size_needed
+
 class Garden:
     def __init__(self, name):
         self.name = name
         self.plants = {}
+        self.minimum_size = 0
 
     def add_plant(self, plant):
         plant_info = searchPlant(plant)
         if plant_info == None:
             print("Plant not in database")
         else:
-            new_plant = Plant(plant_info[0],
-                              plant_info[1],
-                              plant_info[2],
-                              plant_info[3],
-                              plant_info[4],
-                              plant_info[5])
+            new_plant = Plant(plant_info[0], plant_info[1], plant_info[2],
+                                                            plant_info[3],
+                                                            plant_info[4],
+                                                            plant_info[5],
+                                                            plant_info[6],
+                                                            plant_info[7],
+                                                            plant_info[8],
+                                                            plant_info[9],
+                                                            plant_info[10])
             self.plants[plant_info[0]] = new_plant
-            print("Your "+plant+" was added to "+self.name)
+            self.minimum_size = self.minimumSize()
+            # print("Your "+plant+" was added to "+self.name)
 
     def remove_plant(self, plant):
         if plant in self.plants:
             p = self.plants.pop(plant)
+            self.minimum_size = self.minimumSize()
             del p
             print(plant+" removed from "+self.name)
         else:
@@ -91,9 +110,8 @@ class Garden:
             print("no plants in your garden!")
             return
         print("Your garden has "+str(len(self.plants))+" plants")
-        for p in self.plants:
-            print(p.name)
-            # pprint.pprint(vars(p))
+        for key, value in self.plants.items():
+            pprint.pprint(vars(value))
 
     def filter_plants(self, field, search):
         filtered_plants = []
@@ -109,6 +127,10 @@ class Garden:
             print("No plants to remove")
         else:
             self.plants.clear()
+            self.minimum_size = self.minimumSize()
+
+    def minimumSize(self):
+        return minimumSizeHelper(self.plants)
 
     def stats(self):
         gRate_average = []
@@ -116,22 +138,22 @@ class Garden:
         soil_average = []
         hard_average = []
         wa_average = []
-        for key, value in self.plants.items():
+        for value in self.plants.values():
             gRate_average.append(gr_values[value.growth_rate.split(',')[0]])
             exp_average.append(e_values[value.exposure.split(',')[0]])
             soil_average.append(s_values[value.soil.split(',')[0]])
             hard_average.append(h_values[value.hardiness.split(',')[0]])
             wa_average.append(w_values[value.water.split(',')[0]])
-        print(f'Growth Rate average: {sum(gRate_average)/len(gRate_average)}')
-        print(f'Exposure average: {sum(exp_average)/len(exp_average)}')
-        print(f'Soil type average: {sum(soil_average)/len(soil_average)}')
-        print(f'Hardiness zone average: {sum(hard_average)/len(hard_average)}')
-        print(f'Water use average: {sum(wa_average)/len(wa_average)}')
+        print(f'Growth Rate average (0-3): {sum(gRate_average)/len(gRate_average)}')
+        print(f'Exposure average (0-5): {sum(exp_average)/len(exp_average)}')
+        print(f'Soil type average (0-6): {sum(soil_average)/len(soil_average)}')
+        print(f'Hardiness zone average (1-11): {sum(hard_average)/len(hard_average)}')
+        print(f'Water use average (0-6): {sum(wa_average)/len(wa_average)}')
+        print(f'Minimum size needed: {self.minimumSize()} square meters')
 
 
 class Plant(Garden):
-
-    def __init__(self, name, growth_rate, hardiness, exposure, soil, water,
+    def __init__(self, name, growth_rate, exposure, soil, hardiness, water,
                                                                   height,
                                                                   spread,
                                                                   colourInSummer,
@@ -143,8 +165,15 @@ class Plant(Garden):
         self.exposure = exposure
         self.soil = soil
         self.water = water
-        self.height = height
-        self.spread = spread
+        if height == '':
+            self.height = float(0)
+        else:
+            self.height = float(height)
+        if spread == '':
+            self.spread = float(0)
+        else:
+            self.spread = float(spread)
+        self.volume = float(math.pi*(self.spread**2)*self.height)
         self.colourInSummer = colourInSummer
         self.colourInFall = colourInFall
         self.colourPetals = colourPetals
