@@ -7,7 +7,7 @@ class TestGardenMethods(unittest.TestCase):
         self.garden = Garden("test garden")
         self.garden.add_plant('Korean fir')
         self.garden.add_plant('common aster')
-        self.garden.add_plant('beautyberry ')
+        self.garden.add_plant('beautyberry')
 
     def test_addPlant_pass(self):
         self.garden.add_plant('grand fir')
@@ -40,11 +40,16 @@ class TestGardenMethods(unittest.TestCase):
 
 class TestPlantMethods(unittest.TestCase):
     def setUp(self):
-        self.plant = Plant('Test Plant', 'Fast',
-                                    'Full Sun',
-                                    'Well Drained',
-                                    'Zone 1',
-                                    'Heavy')
+        self.plant = Plant('Edward Goucher abelia', 'Moderate',
+                           "Full sun, Part sun/part shade",
+                           "Acidic, Well-drained",
+                           'Zone 6: (-23 to -18 C)',
+                           'Moderate',
+                           2.0,
+                           2.0,
+                           "Green, Red",
+                           "Green, Yellow, Dark-red",
+                           "Showy, Pink")
 
     def test_describe(self):
         self.assertEqual(self.plant.notes, "")
