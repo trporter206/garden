@@ -5,8 +5,12 @@ import random
 # with open('plantList.csv', mode='r') as file:
 #     csv_reader = csv.reader(file, delimiter=',')
 #     values = set()
-#     attr = 10
+#     attr = 6
+#     firstline = True
 #     for row in csv_reader:
+#         if firstline:
+#             firstline = False
+#             continue
 #         if row[attr] not in values:
 #             values.add(row[attr])
 #     print(len(values))
@@ -18,8 +22,12 @@ def create_random_garden(plant_num):
     with open('plantList.csv', mode='r') as file:
         csv_reader = csv.reader(file, delimiter=',')
         line = 0
+        firstline = True
         for row in csv_reader:
-            nums = random.sample(range(1536), plant_num)
+            if firstline:
+                firstline = False
+                continue
+            nums = random.sample(range(60), plant_num)
             if line in nums:
                 randomGarden.add_plant(row[0])
                 if len(randomGarden.plants) == plant_num:
@@ -29,3 +37,6 @@ def create_random_garden(plant_num):
 
 
 pprint.pprint(searchPlant('beautyberry'))
+garden = create_random_garden(5)
+for key, item in garden.plants.items():
+    item.show_pattern()

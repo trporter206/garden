@@ -4,6 +4,8 @@ import datetime
 import struct
 import pprint
 import math
+from PIL import Image
+
 
 gr_values = {''         : 0,
              'Slow'     : 1,
@@ -179,6 +181,7 @@ class Plant(Garden):
         self.colourPetals = colourPetals
         self.plant_date = datetime.datetime.now()
         self.notes = ""
+        self.pattern = Image.open("plant patterns/"+name+".jpg")
 
     def describe(self):
         pprint.pprint(vars(self))
@@ -189,3 +192,6 @@ class Plant(Garden):
     def age(self):
         age = datetime.datetime.now() - self.plant_date
         return age
+
+    def show_pattern(self):
+        return self.pattern.show()

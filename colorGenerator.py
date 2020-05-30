@@ -11,11 +11,11 @@ def identifiers(lists):
             identifiers = colors.split(',')
             for i in identifiers:
                 if item == 0:
-                    summerIdentifiers.add(i)
+                    summerIdentifiers.add(i.strip())
                 elif item == 1:
-                    fallIdentifiers.add(i)
+                    fallIdentifiers.add(i.strip())
                 elif item == 2:
-                    petalIdentifiers.add(i)
+                    petalIdentifiers.add(i.strip())
         item+=1
 
 def database_color_lists():
@@ -35,4 +35,4 @@ def database_color_lists():
     identifiers([summerList, fallList, petalsList])
 
 database_color_lists()
-pprint.pprint(summerIdentifiers)
+pprint.pprint(fallIdentifiers)
