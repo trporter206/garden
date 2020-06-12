@@ -2,7 +2,7 @@ import tkinter as tk
 from gardens import *
 from main import *
 
-garden = create_random_garden(10)
+num_plants = 15
 
 borderEffects = {
     "flat"   : tk.FLAT,
@@ -12,27 +12,39 @@ borderEffects = {
     "ridge"  : tk.RIDGE,
 }
 
+# methods-----------------------------------------------------------------------
+
 def show_data(*args):
     index = lst_plants.curselection()
-    print(list(garden.plants.keys()))
-    lbl_plant["text"] = searchPlant(garden.list_plants()[index[0]])
+    lbl_plant["text"] = searchPlant(lst_plants.get(index))
+
+def newGarden(*args):
+    newGarden = create_random_garden(num_plants)
+    lst_plants.delete(0,tk.END)
+    for key, value in newGarden.plants.items():
+        lst_plants.insert(tk.END, key)
+
+# window and widgets------------------------------------------------------------
 
 window = tk.Tk()
 window.title("Gardener")
-window.rowconfigure(0, minsize=200, weight=1)
-window.columnconfigure([0, 1], minsize=200, weight=1)
+window.rowconfigure([0,1], minsize=200, weight=1)
+window.columnconfigure([0,1], minsize=200, weight=1)
 
-lst_frame = tk.Frame(window)
+btn_createGarden = tk.Button(window, text='New Garden', command=newGarden)
 
 lst_plants = tk.Listbox(window, height=10)
-for key, value in garden.plants.items():
-    lst_plants.insert(tk.END, key)
+# for key, value in garden.plants.items():
+#     lst_plants.insert(tk.END, key)
 lst_plants.bind('<<ListboxSelect>>', show_data)
 
 lbl_plant = tk.Label(window, text='Plant info')
 
+# gridding----------------------------------------------------------------------
+
 # lst_frame.grid(row=0, column=0, sticky='nsew')
-lst_plants.grid(row=0, column=0)
+btn_createGarden.grid(row=0, column=0)
+lst_plants.grid(row=1, column=0)
 lbl_plant.grid(row=0, column=1, sticky='nsew')
 
 window.mainloop()
