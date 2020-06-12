@@ -112,8 +112,7 @@ class Garden:
             print("no plants in your garden!")
             return
         print("Your garden has "+str(len(self.plants))+" plants")
-        for key, value in self.plants.items():
-            pprint.pprint(vars(value))
+        return list(self.plants.keys())
 
     def filter_plants(self, field, search):
         filtered_plants = []

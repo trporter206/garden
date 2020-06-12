@@ -51,7 +51,7 @@ class TestPlantMethods(unittest.TestCase):
                            "Green, Yellow, Dark-red",
                            "Showy, Pink")
 
-    def test_describe(self):
+    def test_editNotes(self):
         self.assertEqual(self.plant.notes, "")
         old_note = self.plant.notes
         self.plant.edit_notes("This is really nice")

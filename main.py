@@ -36,7 +36,7 @@ def create_random_garden(plant_num):
     return randomGarden
 
 
-pprint.pprint(searchPlant('beautyberry'))
-garden = create_random_garden(5)
-for key, item in garden.plants.items():
-    item.show_pattern()
+# pprint.pprint(searchPlant('beautyberry'))
+# garden = create_random_garden(5)
+# for key, item in garden.plants.items():
+#     item.show_pattern()
