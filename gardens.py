@@ -54,6 +54,7 @@ def searchPlant(name):
         for row in csv_reader:
             if row[0] == name:
                 return row
+    return None
 
 def plant_facts(plant):
     plant = searchPlant(plant)
@@ -84,6 +85,7 @@ class Garden:
         plant_info = searchPlant(plant)
         if plant_info == None:
             print("Plant not in database")
+            return None
         else:
             new_plant = Plant(plant_info[0], plant_info[1], plant_info[2],
                                                             plant_info[3],

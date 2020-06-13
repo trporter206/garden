@@ -1,8 +1,11 @@
 import tkinter as tk
+from tkinter import messagebox
+from PIL import ImageTk, Image
 from gardens import *
 from main import *
 
 num_plants = 15
+start_garden = create_random_garden(0)
 
 borderEffects = {
     "flat"   : tk.FLAT,
@@ -16,36 +19,95 @@ borderEffects = {
 
 def show_data(*args):
     index = lst_plants.curselection()
-    lbl_plant["text"] = searchPlant(lst_plants.get(index))
+    lbl_plant["text"] = searchPlant(lst_plants.get(index[0]))
+    pattern = ImageTk.PhotoImage(file="plant patterns/"+lst_plants.get(index)+".jpg")
+    lbl_pattern['image'] = pattern
+    lbl_pattern.image = pattern
 
-def newGarden(*args):
-    newGarden = create_random_garden(num_plants)
+def newGarden(count):
+    newGarden = create_random_garden(count)
     lst_plants.delete(0,tk.END)
     for key, value in newGarden.plants.items():
         lst_plants.insert(tk.END, key)
+
+def addPlant_helper(plant):
+    print(plant)
+    newPlant = searchPlant(plant)
+    if newPlant == None:
+        return None
+    lst_plants.insert(tk.END, newPlant.name)
+
+
+def addPlant(*args):
+    entry = tk.Entry(frm_info, width=30)
+    search = tk.Button(frm_info, text='Add')
+    search.bind("<Button-1>", addPlant_helper(entry.get()))
+    entry.pack()
+    search.pack()
+    print(entry.get())
+    if addPlant_helper(entry.get()) == None:
+        tk.messagebox.showerror('No Plant', "Plant not in database")
+
+def add_tool():
+    pass
+
+def current_tool(*args):
+    frm_info = tk.Frame(window)
+    frm_info.grid(row=0, column=1, sticky='nsew')
+    if tool.get() == 'create':
+        lbl_count = tk.Label(frm_info, text='How many plants?')
+        ent_count = tk.Entry(frm_info, width=30)
+        ent_numPlants = tk.Button(frm_info, text='Create garden',
+                                            command= lambda: newGarden(int(ent_count.get())))
+        lbl_count.pack()
+        ent_count.pack()
+        ent_numPlants.pack()
+    elif tool.get() == 'add':
+        add_tool()
+
+
+
+
 
 # window and widgets------------------------------------------------------------
 
 window = tk.Tk()
 window.title("Gardener")
-window.rowconfigure([0,1], minsize=200, weight=1)
+window.rowconfigure([0,1,2], minsize=200, weight=1)
 window.columnconfigure([0,1], minsize=200, weight=1)
 
-btn_createGarden = tk.Button(window, text='New Garden', command=newGarden)
+tool = tk.StringVar(window)
+
+frm_btns = tk.Frame(window)
+frm_info = tk.Frame(window)
+
+btn_createGarden = tk.Radiobutton(frm_btns, text='New Garden',
+                                            var=tool,
+                                            value="create",
+                                            command=current_tool)
+btn_addPlant = tk.Radiobutton(frm_btns, text='Add Plant',
+                                        var=tool,
+                                        value="add",
+                                        command=current_tool)
 
 lst_plants = tk.Listbox(window, height=10)
-# for key, value in garden.plants.items():
-#     lst_plants.insert(tk.END, key)
+for key, value in start_garden.plants.items():
+    lst_plants.insert(tk.END, key)
 lst_plants.bind('<<ListboxSelect>>', show_data)
 
-lbl_plant = tk.Label(window, text='Plant info')
+lbl_plant = tk.Label(frm_info)
+lbl_pattern = tk.Label(frm_info)
 
 # gridding----------------------------------------------------------------------
 
-# lst_frame.grid(row=0, column=0, sticky='nsew')
-btn_createGarden.grid(row=0, column=0)
+frm_btns.grid(row=0, column=0, sticky='nsew')
+frm_info.grid(row=1, column=1, sticky='nsew')
 lst_plants.grid(row=1, column=0)
-lbl_plant.grid(row=0, column=1, sticky='nsew')
+
+btn_createGarden.pack(pady=10)
+btn_addPlant.pack(pady=5)
+lbl_plant.pack()
+lbl_pattern.pack()
 
 window.mainloop()
 
