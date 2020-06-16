@@ -65,11 +65,8 @@ def current_tool(*args):
         ent_plant.pack()
         btn_addPlant.pack()
 
-
-
-
-
-
+def removePlant(plant, *args):
+    print(plant)
 # window and widgets------------------------------------------------------------
 
 window = tk.Tk()
@@ -96,7 +93,8 @@ lst_plants = tk.Listbox(frm_plants, height=20)
 for key, value in start_garden.plants.items():
     lst_plants.insert(tk.END, key)
 lst_plants.bind('<<ListboxSelect>>', show_data)
-btn_remove = tk.Button(frm_plants, text="Remove")
+btn_remove = tk.Button(frm_plants, text="Remove",
+                                   command= lambda: lst_plants.delete(lst_plants.curselection()))
 
 lbl_plant = tk.Label(frm_info)
 lbl_pattern = tk.Label(frm_info)
