@@ -15,8 +15,15 @@ borderEffects = {
     "ridge"  : tk.RIDGE,
 }
 
+window = tk.Tk()
+window.title("Gardener")
+window.rowconfigure([0,1,2], minsize=200, weight=1)
+window.columnconfigure([0,1], minsize=200, weight=1)
+
+frm_info = tk.Frame(window)
+
 # methods-----------------------------------------------------------------------
-add_status = ""
+lbl_add = tk.Label(frm_info)
 
 def show_data(*args):
     index = lst_plants.curselection()
@@ -37,13 +44,14 @@ def addPlant_helper(plant):
         return None
     else:
         lst_plants.insert(tk.END, newPlant[0])
+        return True
 
 def addPlant(plant, *args):
     newPlant = addPlant_helper(plant)
     if newPlant == None:
-        add_status = "Plant not in database"
+        lbl_add['text'] = f'{plant} not in database'
     else:
-        add_status = f'{plant} added to garden'
+        lbl_add['text'] = f'{plant} added to garden'
 
 def current_tool(*args):
     frm_info = tk.Frame(window)
@@ -51,33 +59,30 @@ def current_tool(*args):
     if tool.get() == 'create':
         lbl_count = tk.Label(frm_info, text='How many plants?')
         ent_count = tk.Entry(frm_info, width=30)
-        btn_numPlants = tk.Button(frm_info, text='Create garden',
-                                            command= lambda: newGarden(int(ent_count.get())))
+        btn_numPlants = tk.Button(frm_info,
+                                  text='Create garden',
+                                  command= lambda: newGarden(int(ent_count.get())))
         lbl_count.pack()
         ent_count.pack()
         btn_numPlants.pack()
     elif tool.get() == 'add':
         lbl_plantName = tk.Label(frm_info, text='Enter plant name: ')
         ent_plant = tk.Entry(frm_info, width=30)
-        btn_addPlant = tk.Button(frm_info, text='Add plant',
-                                           command= lambda: addPlant(ent_plant.get()))
+        btn_addPlant = tk.Button(frm_info,
+                                 text='Add plant',
+                                 command= lambda: addPlant(ent_plant.get()))
         lbl_plantName.pack()
         ent_plant.pack()
         btn_addPlant.pack()
+        lbl_add.pack()
 
 def removePlant(plant, *args):
     print(plant)
-# window and widgets------------------------------------------------------------
-
-window = tk.Tk()
-window.title("Gardener")
-window.rowconfigure([0,1,2], minsize=200, weight=1)
-window.columnconfigure([0,1], minsize=200, weight=1)
+# widgets-----------------------------------------------------------------------
 
 tool = tk.StringVar(window)
 
 frm_btns = tk.Frame(window)
-frm_info = tk.Frame(window)
 frm_plants = tk.Frame(window)
 
 btn_createGarden = tk.Radiobutton(frm_btns, text='New Garden',
@@ -93,8 +98,9 @@ lst_plants = tk.Listbox(frm_plants, height=20)
 for key, value in start_garden.plants.items():
     lst_plants.insert(tk.END, key)
 lst_plants.bind('<<ListboxSelect>>', show_data)
-btn_remove = tk.Button(frm_plants, text="Remove",
-                                   command= lambda: lst_plants.delete(lst_plants.curselection()))
+btn_remove = tk.Button(frm_plants,
+                       text="Remove",
+                       command= lambda: lst_plants.delete(lst_plants.curselection()))
 
 lbl_plant = tk.Label(frm_info)
 lbl_pattern = tk.Label(frm_info)
@@ -108,6 +114,7 @@ frm_plants.grid(row=1, column=0)
 
 btn_createGarden.pack(pady=10)
 btn_addPlant.pack(pady=5)
+lbl_add.pack()
 lbl_plant.pack()
 lbl_pattern.pack()
 lst_plants.pack()
