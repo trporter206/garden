@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter.ttk import *
 from PIL import ImageTk, Image
 from gardens import *
 from main import *
@@ -30,14 +30,10 @@ plant_features = [
 
 window = tk.Tk()
 window.title("Gardener")
-window.rowconfigure([0,1,2], minsize=200, weight=1)
+window.rowconfigure([0,1], minsize=200, weight=1)
 window.columnconfigure([0,1], minsize=200, weight=1)
 
-frm_info = tk.Frame(window)
-
 # methods-----------------------------------------------------------------------
-lbl_add = tk.Label(frm_info)
-maxPlants = tk.StringVar(frm_info)
 
 def show_data(*args):
     index = lst_plants.curselection()
@@ -70,71 +66,59 @@ def addPlant(plant, *args):
 def use_maxplants(*args):
     pass
 
-def current_tool(*args):
-    frm_info = tk.Frame(window)
-    frm_info.grid(row=0, column=1, sticky='nsew')
-    if tool.get() == 'create':
-        lbl_count = tk.Label(frm_info, text='How many plants?')
-        ent_count = tk.Entry(frm_info, width=15)
-        lbl_size = tk.Label(frm_info, text='Yard size, square footage')
-        ent_size = tk.Entry(frm_info, width=15)
-        lbl_maxPlants = tk.Label(frm_info, text='Use maximum # of plants')
-        btn_True = tk.Radiobutton(frm_info, text='True',
-                                                    var=maxPlants,
-                                                    value=True)
-        btn_False = tk.Radiobutton(frm_info, text='False',
-                                                var=maxPlants,
-                                                value=False)
-        lbl_feature = tk.Label(frm_info, text='Organize plants by:')
-        feat = tk.StringVar(frm_info)
-        feat.set(plant_features[0])
-        dropDown = tk.OptionMenu(frm_info, feat, *plant_features)
-        btn_create = tk.Button(frm_info,
-                                  text='Create garden',
-                                  command= lambda: newGarden(int(ent_count.get()),
-                                                             int(ent_size.get()),
-                                                             maxPlants.get(),
-                                                             feat.get()))
-
-        lbl_count.pack()
-        ent_count.pack()
-        lbl_size.pack()
-        ent_size.pack()
-        lbl_maxPlants.pack()
-        btn_True.pack()
-        btn_False.pack()
-        lbl_feature.pack()
-        dropDown.pack()
-        btn_create.pack()
-    elif tool.get() == 'add':
-        lbl_plantName = tk.Label(frm_info, text='Enter plant name: ')
-        ent_plant = tk.Entry(frm_info, width=30)
-        btn_addPlant = tk.Button(frm_info,
-                                 text='Add plant',
-                                 command= lambda: addPlant(ent_plant.get()))
-        lbl_plantName.pack()
-        ent_plant.pack()
-        btn_addPlant.pack()
-        lbl_add.pack()
-
 def removePlant(plant, *args):
     print(plant)
-# widgets-----------------------------------------------------------------------
+# widgets/frames----------------------------------------------------------------
 
-tool = tk.StringVar(window)
+n = Notebook(window)
 
-frm_btns = tk.Frame(window)
+frm_add = tk.Frame(n)
+lbl_plantName = tk.Label(frm_add, text='Enter plant name: ')
+ent_plant = tk.Entry(frm_add, width=30)
+btn_addPlant = tk.Button(frm_add,
+                         text='Add plant',
+                         command= lambda: addPlant(ent_plant.get()))
+lbl_add = tk.Label(frm_add)
+lbl_plantName.pack()
+ent_plant.pack()
+btn_addPlant.pack()
+lbl_add.pack()
+
+frm_create = tk.Frame(n)
+maxPlants = tk.StringVar(frm_create)
+lbl_count = tk.Label(frm_create, text='How many plants?')
+ent_count = tk.Entry(frm_create, width=15)
+lbl_size = tk.Label(frm_create, text='Yard size, square footage')
+ent_size = tk.Entry(frm_create, width=15)
+lbl_maxPlants = tk.Label(frm_create, text='Use maximum # of plants')
+btn_True = tk.Radiobutton(frm_create, text='True',
+                                            var=maxPlants,
+                                            value=True)
+btn_False = tk.Radiobutton(frm_create, text='False',
+                                        var=maxPlants,
+                                        value=False)
+lbl_feature = tk.Label(frm_create, text='Organize plants by:')
+feat = tk.StringVar(frm_create)
+feat.set(plant_features[0])
+dropDown = tk.OptionMenu(frm_create, feat, *plant_features)
+btn_create = tk.Button(frm_create,
+                       text='Create garden',
+                       command= lambda: newGarden(int(ent_count.get()),
+                                                      int(ent_size.get()),
+                                                      maxPlants.get(),
+                                                      feat.get()))
+lbl_count.pack()
+ent_count.pack()
+lbl_size.pack()
+ent_size.pack()
+lbl_maxPlants.pack()
+btn_True.pack()
+btn_False.pack()
+lbl_feature.pack()
+dropDown.pack()
+btn_create.pack()
+
 frm_plants = tk.Frame(window)
-
-btn_createGarden = tk.Radiobutton(frm_btns, text='New Garden',
-                                            var=tool,
-                                            value="create",
-                                            command=current_tool)
-btn_addPlant = tk.Radiobutton(frm_btns, text='Add Plant',
-                                        var=tool,
-                                        value="add",
-                                        command=current_tool)
-
 lst_plants = tk.Listbox(frm_plants, height=20)
 for key, value in start_garden.plants.items():
     lst_plants.insert(tk.END, key)
@@ -143,21 +127,21 @@ btn_remove = tk.Button(frm_plants,
                        text="Remove",
                        command= lambda: lst_plants.delete(lst_plants.curselection()))
 
+frm_info = tk.Frame(window, width=30)
 lbl_plant = tk.Label(frm_info)
 lbl_pattern = tk.Label(frm_info)
 
 # gridding----------------------------------------------------------------------
 
-frm_btns.grid(row=0, column=0, sticky='nsew')
-frm_info.grid(row=1, column=1, sticky='nsew')
+n.grid(row=0, column=0, sticky='nsew')
+n.add(frm_create, text='Create')
+n.add(frm_add, text='Add')
+frm_info.grid(row=1, column=1)
 frm_plants.grid(row=1, column=0)
 
-
-btn_createGarden.pack(pady=10)
-btn_addPlant.pack(pady=5)
 lbl_add.pack()
 lbl_plant.pack()
-lbl_pattern.pack()
+# lbl_pattern.pack(fill=tk.X)
 lst_plants.pack()
 btn_remove.pack()
 
