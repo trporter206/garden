@@ -30,17 +30,23 @@ plant_features = [
 
 window = tk.Tk()
 window.title("Gardener")
-window.rowconfigure([0,1], minsize=200, weight=1)
-window.columnconfigure([0,1], minsize=200, weight=1)
+window.rowconfigure([0,1], minsize=500, weight=1)
+window.columnconfigure([0,1], minsize=500, weight=1)
 
 # methods-----------------------------------------------------------------------
+def plantTextFormat(text):
+    for w in frm_info.pack_slaves():
+        w.pack_forget()
+    for i, val in enumerate(text[1:]):
+        if val == '':
+            val = 'NA'
+        label = tk.Label(frm_info, text=str(plant_features[i])+': '+str(val))
+        label.pack()
 
 def show_data(*args):
     index = lst_plants.curselection()
-    lbl_plant["text"] = searchPlant(lst_plants.get(index[0]))
-    pattern = ImageTk.PhotoImage(file="plant patterns/"+lst_plants.get(index)+".jpg")
-    lbl_pattern['image'] = pattern
-    lbl_pattern.image = pattern
+    plant_data = searchPlant(lst_plants.get(index[0]))
+    plantTextFormat(plant_data)
 
 def newGarden(count, size, max, feature):
     newGarden = create_random_garden(count)
@@ -86,6 +92,7 @@ lbl_add.pack()
 
 frm_create = tk.Frame(n)
 maxPlants = tk.StringVar(frm_create)
+maxPlants.set("False")
 lbl_count = tk.Label(frm_create, text='How many plants?')
 ent_count = tk.Entry(frm_create, width=15)
 lbl_size = tk.Label(frm_create, text='Yard size, square footage')
@@ -93,10 +100,10 @@ ent_size = tk.Entry(frm_create, width=15)
 lbl_maxPlants = tk.Label(frm_create, text='Use maximum # of plants')
 btn_True = tk.Radiobutton(frm_create, text='True',
                                             var=maxPlants,
-                                            value=True)
+                                            value="True")
 btn_False = tk.Radiobutton(frm_create, text='False',
                                         var=maxPlants,
-                                        value=False)
+                                        value="False")
 lbl_feature = tk.Label(frm_create, text='Organize plants by:')
 feat = tk.StringVar(frm_create)
 feat.set(plant_features[0])
@@ -104,9 +111,9 @@ dropDown = tk.OptionMenu(frm_create, feat, *plant_features)
 btn_create = tk.Button(frm_create,
                        text='Create garden',
                        command= lambda: newGarden(int(ent_count.get()),
-                                                      int(ent_size.get()),
-                                                      maxPlants.get(),
-                                                      feat.get()))
+                                                  int(ent_size.get()),
+                                                  maxPlants.get(),
+                                                  feat.get()))
 lbl_count.pack()
 ent_count.pack()
 lbl_size.pack()
@@ -127,9 +134,7 @@ btn_remove = tk.Button(frm_plants,
                        text="Remove",
                        command= lambda: lst_plants.delete(lst_plants.curselection()))
 
-frm_info = tk.Frame(window, width=30)
-lbl_plant = tk.Label(frm_info)
-lbl_pattern = tk.Label(frm_info)
+frm_info = tk.Frame(window)
 
 # gridding----------------------------------------------------------------------
 
@@ -140,171 +145,9 @@ frm_info.grid(row=1, column=1)
 frm_plants.grid(row=1, column=0)
 
 lbl_add.pack()
-lbl_plant.pack()
+# lbl_plant.pack()
 # lbl_pattern.pack(fill=tk.X)
 lst_plants.pack()
 btn_remove.pack()
 
 window.mainloop()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# example form GUI--------------------------------------------------------------
-
-# labels = [
-#     'First name: ',
-#     'Last name: ',
-#     'Address 1: ',
-#     'Address 2: ',
-#     'City: ',
-#     'Province: ',
-#     'Postal Code: ',
-#     'Country: '
-# ]
-#
-# window = tk.Tk()
-# window.title('Entry Form')
-#
-# entries = tk.Frame(master=window, relief=tk.SUNKEN, borderwidth=3)
-# entries.pack()
-#
-# for i in range(len(labels)):
-#     label = tk.Label(master=entries, text=labels[i])
-#     entry = tk.Entry(master=entries, width=30)
-#     label.grid(row=i, column=0, sticky='w')
-#     entry.grid(row=i, column=1)
-#
-# buttons = tk.Frame()
-# buttons.pack(fill=tk.X, ipadx=5, ipady= 5)
-#
-# clearButton = tk.Button(master= buttons, text='Clear')
-# clearButton.bind("<Button-1>", handle_click)
-# clearButton.pack(side= tk.RIGHT, ipadx=10)
-#
-# submitButton = tk.Button(master= buttons, text='clear')
-# submitButton.pack(side= tk.RIGHT, ipadx=10)
-#
-# window.mainloop()
-
-# example simple counter-------------------------------------------------------
-
-# def increase():
-#     value = int(lbl_value["text"])
-#     lbl_value["text"] = f"{value + 1}"
-#
-# def decrease():
-#     value = int(lbl_value["text"])
-#     lbl_value["text"] = f"{value - 1}"
-#
-# window = tk.Tk()
-#
-# window.rowconfigure(0, minsize=50, weight=1)
-# window.columnconfigure([0, 1, 2], minsize=50, weight=1)
-#
-# btn_decrease = tk.Button(master=window, text="-", command=decrease)
-# btn_decrease.grid(row=0, column=0, sticky="nsew")
-#
-# lbl_value = tk.Label(master=window, text="0")
-# lbl_value.grid(row=0, column=1)
-#
-# btn_increase = tk.Button(master=window, text="+", command=increase)
-# btn_increase.grid(row=0, column=2, sticky="nsew")
-#
-# window.mainloop()
-
-# example dice roller-----------------------------------------------------------
-
-# def roll():
-#     lbl_roll["text"] = f"{random.randint(1,6)}"
-#
-# window = tk.Tk()
-# window.rowconfigure([0,1], minsize=50, weight=1)
-# window.columnconfigure(0, minsize=50, weight=1)
-#
-# btn_roll = tk.Button(master=window, text="Roll", command=roll, relief= tk.RAISED)
-# btn_roll.grid(row=0, column=0, sticky="nsew")
-#
-# lbl_roll = tk.Label(master=window, text="0")
-# lbl_roll.grid(row=1, column=0)
-#
-# window.mainloop()
-
-# example temperature converter-------------------------------------------------
-
-# def convert():
-#     fahrenheit = ent_temp.get()
-#     celsius = (5/9) * (float(fahrenheit) - 32)
-#     lbl_result["text"] = f"{round(celsius, 2)} \N{DEGREE CELSIUS}"
-#
-# window = tk.Tk()
-# window.rowconfigure(0, minsize=50, weight=1)
-# window.columnconfigure([0,1,2], minsize=50, weight=1)
-#
-# ent_temp = tk.Entry(master=window, width=5)
-# lbl_temp = tk.Label(master=window, text='F')
-# ent_temp.grid(row=0, column=0)
-# lbl_temp.grid(row=0, column=0, sticky='e')
-#
-# btn_convert = tk.Button(master=window, text="Convert", command=convert)
-# btn_convert.grid(row=0, column=1, sticky='nsew')
-#
-# lbl_result = tk.Label(master=window)
-# lbl_result.grid(row=0, column=2)
-#
-# window.mainloop()
-
-# example text editor-----------------------------------------------------------
-# from tkinter.filedialog import askopenfilename, asksaveasfilename
-#
-# def open_file():
-#     filepath = askopenfilename(
-#         filetypes = [("Text Files", "*.txt"), ("All Files, *.*")]
-#     )
-#     if not filepath:
-#         return
-#     txt_edit.delete("1.0", tk.END)
-#     with open(filepath, "r") as input_file:
-#         text = input_file.read()
-#         txt_edit.insert(tk.END, text)
-#     window.title(f"Simple Text Editor - {filepath}")
-#
-# def save_file():
-#     filepath = asksaveasfilename(
-#         defaultextension="txt",
-#         filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")],
-#     )
-#     if not filepath:
-#         return
-#     with open(filepath, "w") as output_file:
-#         text = txt_edit.get("1.0", tk.END)
-#         output_file.write(text)
-#     window.title(f"Simple Text Editor - {filepath}")
-#
-# window = tk.Tk()
-# window.title('Text Editor')
-#
-# window.rowconfigure(0, minsize=800, weight=1)
-# window.columnconfigure(1, minsize=800, weight=1)
-#
-# txt_edit = tk.Text(window)
-# fr_buttons = tk.Frame(window)
-# btn_open = tk.Button(fr_buttons, text="Open", command=open_file)
-# btn_save = tk.Button(fr_buttons, text='Save as...', command=save_file)
-#
-# btn_open.grid(row=0, column=0, sticky='ew', padx=5, pady=5)
-# btn_save.grid(row=1, column=0, sticky='ew', padx=5)
-# fr_buttons.grid(row=0, column=0, sticky='ns')
-# txt_edit.grid(row=0, column=1, sticky='nsew')
-#
-# window.mainloop()
