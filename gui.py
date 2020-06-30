@@ -2,10 +2,10 @@ import tkinter as tk
 from tkinter.ttk import *
 from PIL import ImageTk, Image
 from gardens import *
-from main import *
+from gardenCreator import *
 
 num_plants = 15
-start_garden = create_random_garden(0)
+start_garden = createGardenHelper(0,0,False,'')
 
 borderEffects = {
     "flat"   : tk.FLAT,
@@ -21,11 +21,6 @@ plant_features = [
     'soil',
     'hardiness',
     'water',
-    'height',
-    'spread',
-    'colourInSummer',
-    'colourInFall',
-    'colourPetals'
 ]
 
 window = tk.Tk()
@@ -49,7 +44,7 @@ def show_data(*args):
     plantTextFormat(plant_data)
 
 def newGarden(count, size, max, feature):
-    newGarden = create_random_garden(count)
+    newGarden = createGardenHelper(count, size, max, feature)
     lst_plants.delete(0,tk.END)
     for key, value in newGarden.plants.items():
         lst_plants.insert(tk.END, key)
@@ -74,6 +69,16 @@ def use_maxplants(*args):
 
 def removePlant(plant, *args):
     print(plant)
+
+def updateOptions(*args):
+    feature = plant_values[feat.get()]
+    feat_option.set(feature[0])
+    menu = dropDown2['menu']
+    menu.delete(0, 'end')
+
+    for val in feature:
+        menu.add_command(label=val, command=lambda option=val: feat_option.set(option))
+
 # widgets/frames----------------------------------------------------------------
 
 n = Notebook(window)
@@ -106,14 +111,18 @@ btn_False = tk.Radiobutton(frm_create, text='False',
                                         value="False")
 lbl_feature = tk.Label(frm_create, text='Organize plants by:')
 feat = tk.StringVar(frm_create)
+feat_option = tk.StringVar(frm_create)
+feat.trace('w', updateOptions)
+dropDown1 = tk.OptionMenu(frm_create, feat, *plant_features)
+dropDown2 = tk.OptionMenu(frm_create, feat_option, '')
 feat.set(plant_features[0])
-dropDown = tk.OptionMenu(frm_create, feat, *plant_features)
+
 btn_create = tk.Button(frm_create,
                        text='Create garden',
                        command= lambda: newGarden(int(ent_count.get()),
                                                   int(ent_size.get()),
                                                   maxPlants.get(),
-                                                  feat.get()))
+                                                  feat_option.get()))
 lbl_count.pack()
 ent_count.pack()
 lbl_size.pack()
@@ -122,7 +131,8 @@ lbl_maxPlants.pack()
 btn_True.pack()
 btn_False.pack()
 lbl_feature.pack()
-dropDown.pack()
+dropDown1.pack()
+dropDown2.pack()
 btn_create.pack()
 
 frm_plants = tk.Frame(window)
@@ -145,8 +155,6 @@ frm_info.grid(row=1, column=1)
 frm_plants.grid(row=1, column=0)
 
 lbl_add.pack()
-# lbl_plant.pack()
-# lbl_pattern.pack(fill=tk.X)
 lst_plants.pack()
 btn_remove.pack()
 

@@ -6,47 +6,28 @@ import pprint
 import math
 from PIL import Image
 
-
-gr_values = {''         : 0,
-             'Slow'     : 1,
-             'Moderate' : 2,
-             'Fast'     : 3
-             }
-e_values = {''                                 : 0,
-            'Sheltered'                        : 1,
-            'Deep shade'                       : 2,
-            'Filtered shade'                   : 3,
-            'Part sun/part shade'              : 4,
-            'Full sun only if soil kept moist' : 5,
-            'Full sun'                         : 6,
-            }
-s_values = {''                         : 0,
-            'Acidic'                   : 1,
-            'Alkaline'                 : 2,
-            'Bog'                      : 3,
-            'Humus rich'               : 4,
-            'Rocky or gravelly or dry' : 5,
-            'Well-drained'             : 6}
-h_values = {'Zone 1: (below -46 C)'   : 1,
-            'Zone 2: (-46 to -40 C)'  : 2,
-            'Zone 3: (-40 to -34 C)'  : 3,
-            'Zone 4: (-34 to -29 C)'  : 4,
-            'Zone 5: (-29 to -23 C)'  : 5,
-            'Zone 6: (-23 to -18 C)'  : 6,
-            'Zone 7: (-18 to -12 C)'  : 7,
-            'Zone 8a: (-12 to -9.5 C)': 8,
-            'Zone 8b: (-9.4 to -7 C)' : 8,
-            'Zone 9: (-7 to -1 C)'    : 9,
-            'Zone 10: (-1 to 4 C)'    : 10,
-            'Zone 11: (above 4 C)'    : 11}
-w_values = {''           : 0,
-            'NA'         : 0,
-            'Low'        : 1,
-            'Summer dry' : 2,
-            'Moderate'   : 3,
-            'High'       : 4,
-            'Wetlands'   : 5,
-            'Aquatic'    : 6}
+plant_values = {
+    'growth_rate' : ['', 'Slow', 'Moderate', 'Fast'],
+    'exposure'    : ['', 'Sheltered', 'Deep shade', 'Filtered shade',
+                                                   'Part sun/part shade',
+                                                    'Full sun only if soil kept moist',
+                                                    'Full sun'],
+    'soil'        : ['', 'Acidic', 'Alkaline', 'Bog', 'Humus rich',
+                                                      'Rocky or gravelly or dry',
+                                                      'Well-drained'],
+    'hardiness'   : ['Zone 1: (below -46 C)', 'Zone 2: (-46 to -40 C)',
+                                              'Zone 3: (-40 to -34 C)',
+                                              'Zone 4: (-34 to -29 C)',
+                                              'Zone 5: (-29 to -23 C)',
+                                              'Zone 6: (-23 to -18 C)',
+                                              'Zone 7: (-18 to -12 C)',
+                                              'Zone 8a: (-12 to -9.5 C)',
+                                              'Zone 8b: (-9.4 to -7 C)',
+                                              'Zone 9: (-7 to -1 C)',
+                                              'Zone 10: (-1 to 4 C)',
+                                              'Zone 11: (above 4 C)'],
+    'water'       : ['', 'NA', 'Low', 'Summer dry', 'Moderate', 'High', 'Wetlands', 'Aquatic']
+}
 
 def searchPlant(name):
     with open('plantList.csv', mode='r') as file:
@@ -79,7 +60,8 @@ class Garden:
     def __init__(self, name):
         self.name = name
         self.plants = {}
-        self.minimum_size = 0
+        self.size = 0
+        self.maximumSize = 0
 
     def add_plant(self, plant):
         plant_info = searchPlant(plant)
