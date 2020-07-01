@@ -5,6 +5,8 @@ import struct
 import pprint
 import math
 from PIL import Image
+import os.path
+from os import path
 
 plant_values = {
     'growth_rate' : ['', 'Slow', 'Moderate', 'Fast'],
@@ -159,12 +161,14 @@ class Plant(Garden):
         else:
             self.spread = float(spread)
         self.volume = float(math.pi*(self.spread**2)*self.height)
+        self.coverage = float(self.spread**2)
         self.colourInSummer = colourInSummer
         self.colourInFall = colourInFall
         self.colourPetals = colourPetals
         self.plant_date = datetime.datetime.now()
         self.notes = ""
-        self.pattern = Image.open("plant patterns/"+name+".jpg")
+        if path.exists("plant patterns/"+name+".jpg"):
+            self.pattern = Image.open("plant patterns/"+name+".jpg")
 
     def describe(self):
         pprint.pprint(vars(self))

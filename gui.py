@@ -5,7 +5,7 @@ from gardens import *
 from gardenCreator import *
 
 num_plants = 15
-start_garden = createGardenHelper(0,0,False,'')
+start_garden = createGardenHelper(0,0,False,'','')
 
 borderEffects = {
     "flat"   : tk.FLAT,
@@ -43,8 +43,8 @@ def show_data(*args):
     plant_data = searchPlant(lst_plants.get(index[0]))
     plantTextFormat(plant_data)
 
-def newGarden(count, size, max, feature):
-    newGarden = createGardenHelper(count, size, max, feature)
+def newGarden(count, size, max, feature, val):
+    newGarden = createGardenHelper(count, size, max, feature, val)
     lst_plants.delete(0,tk.END)
     for key, value in newGarden.plants.items():
         lst_plants.insert(tk.END, key)
@@ -122,6 +122,7 @@ btn_create = tk.Button(frm_create,
                        command= lambda: newGarden(int(ent_count.get()),
                                                   int(ent_size.get()),
                                                   maxPlants.get(),
+                                                  feat.get(),
                                                   feat_option.get()))
 lbl_count.pack()
 ent_count.pack()
