@@ -15,7 +15,20 @@ borderEffects = {
     "ridge"  : tk.RIDGE,
 }
 
-plant_features = [
+displayed_features = [
+    'growth_rate',
+    'exposure',
+    'soil',
+    'hardiness',
+    'water',
+    'height',
+    'spread',
+    'colourInSummer',
+    'colourInFall',
+    'colourPetals',
+]
+
+choosable_features = [
     'growth_rate',
     'exposure',
     'soil',
@@ -35,7 +48,7 @@ def plantTextFormat(text):
     for i, val in enumerate(text[1:]):
         if val == '':
             val = 'NA'
-        label = tk.Label(frm_info, text=str(plant_features[i])+': '+str(val))
+        label = tk.Label(frm_info, text=str(displayed_features[i])+': '+str(val))
         label.pack()
 
 def show_data(*args):
@@ -113,9 +126,9 @@ lbl_feature = tk.Label(frm_create, text='Organize plants by:')
 feat = tk.StringVar(frm_create)
 feat_option = tk.StringVar(frm_create)
 feat.trace('w', updateOptions)
-dropDown1 = tk.OptionMenu(frm_create, feat, *plant_features)
+dropDown1 = tk.OptionMenu(frm_create, feat, *choosable_features)
 dropDown2 = tk.OptionMenu(frm_create, feat_option, '')
-feat.set(plant_features[0])
+feat.set(choosable_features[0])
 
 btn_create = tk.Button(frm_create,
                        text='Create garden',
