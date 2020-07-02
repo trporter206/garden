@@ -5,7 +5,7 @@ from gardens import *
 import csv
 import random
 
-def createGardenHelper(count, size, max, feature, val):
+def createGardenHelper(size, max, feature, val):
     newGarden = Garden("New Garden")
     if feature == '':
         return newGarden
@@ -20,9 +20,12 @@ def createGardenHelper(count, size, max, feature, val):
                 firstline = False
                 val_index = row.index(feature)
                 continue
+            # where the action starts
             if row[val_index] == val:
-                newGarden.add_plant(row[0])
-                if len(newGarden.plants) == count:
+                print(row)
+                if (newGarden.size+float(row[7])) < size:
+                    newGarden.add_plant(row[0])
+                else:
                     return newGarden
 
             line +=1

@@ -5,7 +5,7 @@ from gardens import *
 from gardenCreator import *
 
 num_plants = 15
-start_garden = createGardenHelper(0,0,False,'','')
+start_garden = createGardenHelper(0,False,'','')
 
 borderEffects = {
     "flat"   : tk.FLAT,
@@ -56,8 +56,8 @@ def show_data(*args):
     plant_data = searchPlant(lst_plants.get(index[0]))
     plantTextFormat(plant_data)
 
-def newGarden(count, size, max, feature, val):
-    newGarden = createGardenHelper(count, size, max, feature, val)
+def newGarden(size, max, feature, val):
+    newGarden = createGardenHelper(size, max, feature, val)
     lst_plants.delete(0,tk.END)
     for key, value in newGarden.plants.items():
         lst_plants.insert(tk.END, key)
@@ -111,8 +111,6 @@ lbl_add.pack()
 frm_create = tk.Frame(n)
 maxPlants = tk.StringVar(frm_create)
 maxPlants.set("False")
-lbl_count = tk.Label(frm_create, text='How many plants?')
-ent_count = tk.Entry(frm_create, width=15)
 lbl_size = tk.Label(frm_create, text='Yard size, square footage')
 ent_size = tk.Entry(frm_create, width=15)
 lbl_maxPlants = tk.Label(frm_create, text='Use maximum # of plants')
@@ -132,13 +130,10 @@ feat.set(choosable_features[0])
 
 btn_create = tk.Button(frm_create,
                        text='Create garden',
-                       command= lambda: newGarden(int(ent_count.get()),
-                                                  int(ent_size.get()),
+                       command= lambda: newGarden(int(ent_size.get()),
                                                   maxPlants.get(),
                                                   feat.get(),
                                                   feat_option.get()))
-lbl_count.pack()
-ent_count.pack()
 lbl_size.pack()
 ent_size.pack()
 lbl_maxPlants.pack()

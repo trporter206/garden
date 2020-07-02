@@ -82,6 +82,7 @@ class Garden:
                                                             plant_info[10])
             self.plants[plant_info[0]] = new_plant
             self.minimum_size = self.minimumSize()
+            self.size+= float(plant_info[7])
             # print("Your "+plant+" was added to "+self.name)
 
     def remove_plant(self, plant):
