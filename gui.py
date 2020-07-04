@@ -1,4 +1,6 @@
 import tkinter as tk
+import csv
+from tkinter.filedialog import askopenfilename, asksaveasfilename
 from tkinter.ttk import *
 from PIL import ImageTk, Image
 from gardens import *
@@ -53,7 +55,7 @@ def plantTextFormat(text):
 
 def show_data(*args):
     index = lst_plants.curselection()
-    plant_data = searchPlant(lst_plants.get(index[0]))
+    plant_data = searchPlant(lst_plants.get(index[0]).strip())
     plantTextFormat(plant_data)
 
 def newGarden(size, max, feature, val):
@@ -91,6 +93,32 @@ def updateOptions(*args):
 
     for val in feature:
         menu.add_command(label=val, command=lambda option=val: feat_option.set(option))
+
+def openFile():
+    filepath = askopenfilename(
+        filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")]
+    )
+    if not filepath:
+        return
+    lst_plants.delete(0, tk.END)
+    with open(filepath, "r") as input_file:
+        next(input_file)
+        row = 0
+        for line in input_file:
+            lst_plants.insert(row, line)
+            row+=1
+
+def saveFile():
+    filepath = asksaveasfilename(
+        defaultextension="txt",
+        filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")],
+    )
+    if not filepath:
+        return
+    with open(filepath, "a") as output_file:
+        for plant in lst_plants.get(0, tk.END):
+            output_file.write("\n")
+            output_file.write(plant)
 
 # widgets/frames----------------------------------------------------------------
 
@@ -152,6 +180,13 @@ lst_plants.bind('<<ListboxSelect>>', show_data)
 btn_remove = tk.Button(frm_plants,
                        text="Remove",
                        command= lambda: lst_plants.delete(lst_plants.curselection()))
+btn_open = tk.Button(frm_plants, text="Open", command=openFile)
+btn_save = tk.Button(frm_plants, text="Save As", command=saveFile)
+lbl_add.pack()
+lst_plants.pack()
+btn_remove.pack()
+btn_open.pack()
+btn_save.pack()
 
 frm_info = tk.Frame(window)
 
@@ -162,9 +197,5 @@ n.add(frm_create, text='Create')
 n.add(frm_add, text='Add')
 frm_info.grid(row=1, column=1)
 frm_plants.grid(row=1, column=0)
-
-lbl_add.pack()
-lst_plants.pack()
-btn_remove.pack()
 
 window.mainloop()

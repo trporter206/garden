@@ -12,21 +12,22 @@ def createGardenHelper(size, max, feature, val):
     newGarden.maximumSize = size
     with open('plantList.csv', mode='r') as file:
         csv_reader = csv.reader(file, delimiter=',')
-        line = 0
         firstline = True
         val_index = ''
+        possible_plants = []
         for row in csv_reader:
             if firstline:
                 firstline = False
                 val_index = row.index(feature)
                 continue
-            # where the action starts
+            if row[7] == '':
+                spread = 0
+            else:
+                spread = float(row[7])
             if row[val_index] == val:
-                print(row)
-                if (newGarden.size+float(row[7])) < size:
+                if (newGarden.size+spread) < size:
                     newGarden.add_plant(row[0])
                 else:
                     return newGarden
-
-            line +=1
+            
     return newGarden
