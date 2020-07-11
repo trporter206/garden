@@ -6,8 +6,7 @@ from PIL import ImageTk, Image
 from gardens import *
 from gardenCreator import *
 
-num_plants = 15
-start_garden = createGardenHelper(0,False,'','')
+garden = Garden()
 
 borderEffects = {
     "flat"   : tk.FLAT,
@@ -55,38 +54,40 @@ def plantTextFormat(text):
 
 def show_data(*args):
     index = lst_plants.curselection()
-    plant_data = searchPlant(lst_plants.get(index[0]).strip())
+    plant_data = Garden.searchPlant(lst_plants.get(index[0]).strip())
     plantTextFormat(plant_data)
 
 def newGarden(size, max, feature, val):
-    newGarden = createGardenHelper(size, max, feature, val)
+    newGarden = Garden()
+    newGarden = createGardenHelper(newGarden, size, max, feature, val)
+    garden = newGarden
+    del newGarden
     lst_plants.delete(0,tk.END)
-    for key, value in newGarden.plants.items():
+    for key, value in garden.plants.items():
         lst_plants.insert(tk.END, key)
 
-def addPlant_helper(plant):
-    newPlant = searchPlant(plant)
-    if newPlant == None:
-        return None
-    else:
-        lst_plants.insert(tk.END, newPlant[0])
-        return True
+# def addPlant_helper(plant):
+#     newPlant = searchPlant(plant)
+#     if newPlant == None:
+#         return None
+#     else:
+#         lst_plants.insert(tk.END, newPlant[0])
+#         return True
 
-def addPlant(plant, *args):
-    newPlant = addPlant_helper(plant)
-    if newPlant == None:
+def addPlant(plant, garden, *args):
+    garden.add_plant(plant, garden)
+    if length1 < length2:
         lbl_add['text'] = f'{plant} not in database'
     else:
+        for key, value in garden.plants.items():
+            lst_plants.insert(tk.END, key)
         lbl_add['text'] = f'{plant} added to garden'
 
-def use_maxplants(*args):
-    pass
-
-def removePlant(plant, *args):
-    print(plant)
+def removePlant(plant, garden, *args):
+    garden.remove_plant(plant)
 
 def updateOptions(*args):
-    feature = plant_values[feat.get()]
+    feature = Garden.plant_values[feat.get()]
     feat_option.set(feature[0])
     menu = dropDown2['menu']
     menu.delete(0, 'end')
@@ -129,7 +130,7 @@ lbl_plantName = tk.Label(frm_add, text='Enter plant name: ')
 ent_plant = tk.Entry(frm_add, width=30)
 btn_addPlant = tk.Button(frm_add,
                          text='Add plant',
-                         command= lambda: addPlant(ent_plant.get()))
+                         command= lambda: addPlant(ent_plant.get(), garden))
 lbl_add = tk.Label(frm_add)
 lbl_plantName.pack()
 ent_plant.pack()
@@ -174,7 +175,7 @@ btn_create.pack()
 
 frm_plants = tk.Frame(window)
 lst_plants = tk.Listbox(frm_plants, height=20)
-for key, value in start_garden.plants.items():
+for key, value in garden.plants.items():
     lst_plants.insert(tk.END, key)
 lst_plants.bind('<<ListboxSelect>>', show_data)
 btn_remove = tk.Button(frm_plants,

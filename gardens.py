@@ -8,65 +8,58 @@ from PIL import Image
 import os.path
 from os import path
 
-plant_values = {
-    'growth_rate' : ['', 'Slow', 'Moderate', 'Fast'],
-    'exposure'    : ['', 'Sheltered', 'Deep shade', 'Filtered shade',
-                                                   'Part sun/part shade',
-                                                    'Full sun only if soil kept moist',
-                                                    'Full sun'],
-    'soil'        : ['', 'Acidic', 'Alkaline', 'Bog', 'Humus rich',
-                                                      'Rocky or gravelly or dry',
-                                                      'Well-drained'],
-    'hardiness'   : ['Zone 1: (below -46 C)', 'Zone 2: (-46 to -40 C)',
-                                              'Zone 3: (-40 to -34 C)',
-                                              'Zone 4: (-34 to -29 C)',
-                                              'Zone 5: (-29 to -23 C)',
-                                              'Zone 6: (-23 to -18 C)',
-                                              'Zone 7: (-18 to -12 C)',
-                                              'Zone 8a: (-12 to -9.5 C)',
-                                              'Zone 8b: (-9.4 to -7 C)',
-                                              'Zone 9: (-7 to -1 C)',
-                                              'Zone 10: (-1 to 4 C)',
-                                              'Zone 11: (above 4 C)'],
-    'water'       : ['', 'NA', 'Low', 'Summer dry', 'Moderate', 'High', 'Wetlands', 'Aquatic']
-}
-
-def searchPlant(name):
-    with open('plantList.csv', mode='r') as file:
-        csv_reader = csv.reader(file, delimiter=',')
-        for row in csv_reader:
-            if row[0] == name:
-                return row
-    return None
-
-def plant_facts(plant):
-    plant = searchPlant(plant)
-    print(f"Plant name: {plant[0]}")
-    print(f"Growth rate: {plant[1]}")
-    print(f"Exposure: {plant[2]}")
-    print(f"Soil: {plant[3]}")
-    print(f"Hardiness: {plant[4]}")
-    print(f"Water use: {plant[5]}")
-
-def minimumSizeHelper(plants):
-    size_needed = 0
-    if len(plants) == 0:
-        return 0
-    else:
-        for plant in plants:
-            print(plant)
-            size_needed+=plants[plant].volume
-    return size_needed
-
 class Garden:
-    def __init__(self, name):
-        self.name = name
+    plant_values = {
+        'growth_rate' : ['', 'Slow', 'Moderate', 'Fast'],
+        'exposure'    : ['', 'Sheltered', 'Deep shade', 'Filtered shade',
+                                                       'Part sun/part shade',
+                                                        'Full sun only if soil kept moist',
+                                                        'Full sun'],
+        'soil'        : ['', 'Acidic', 'Alkaline', 'Bog', 'Humus rich',
+                                                          'Rocky or gravelly or dry',
+                                                          'Well-drained'],
+        'hardiness'   : ['Zone 1: (below -46 C)', 'Zone 2: (-46 to -40 C)',
+                                                  'Zone 3: (-40 to -34 C)',
+                                                  'Zone 4: (-34 to -29 C)',
+                                                  'Zone 5: (-29 to -23 C)',
+                                                  'Zone 6: (-23 to -18 C)',
+                                                  'Zone 7: (-18 to -12 C)',
+                                                  'Zone 8a: (-12 to -9.5 C)',
+                                                  'Zone 8b: (-9.4 to -7 C)',
+                                                  'Zone 9: (-7 to -1 C)',
+                                                  'Zone 10: (-1 to 4 C)',
+                                                  'Zone 11: (above 4 C)'],
+        'water'       : ['', 'NA', 'Low', 'Summer dry', 'Moderate', 'High', 'Wetlands', 'Aquatic']
+    }
+
+    def __init__(self):
+        self.name = 'Garden'
         self.plants = {}
         self.size = 0
         self.maximumSize = 0
 
-    def add_plant(self, plant):
-        plant_info = searchPlant(plant)
+    @staticmethod
+    def searchPlant(name):
+        with open('plantList.csv', mode='r') as file:
+            csv_reader = csv.reader(file, delimiter=',')
+            for row in csv_reader:
+                if row[0] == name:
+                    return row
+        return None
+
+    @staticmethod
+    def plant_facts(plant):
+        plant = searchPlant(plant)
+        print(f"Plant name: {plant[0]}")
+        print(f"Growth rate: {plant[1]}")
+        print(f"Exposure: {plant[2]}")
+        print(f"Soil: {plant[3]}")
+        print(f"Hardiness: {plant[4]}")
+        print(f"Water use: {plant[5]}")
+
+    @classmethod
+    def add_plant(self, plant, garden):
+        plant_info = self.searchPlant(plant)
         if plant_info == None:
             print("Plant not in database")
             return None
@@ -80,11 +73,12 @@ class Garden:
                                                             plant_info[8],
                                                             plant_info[9],
                                                             plant_info[10])
-            self.plants[plant_info[0]] = new_plant
-            self.minimum_size = self.minimumSize()
-            self.size+= float(plant_info[7])
+            garden.plants[plant_info[0]] = new_plant
+            garden.minimum_size = garden.minimumSize(garden)
+            garden.size+= float(plant_info[7])
             # print("Your "+plant+" was added to "+self.name)
 
+    @classmethod
     def remove_plant(self, plant):
         if plant in self.plants:
             p = self.plants.pop(plant)
@@ -94,6 +88,7 @@ class Garden:
         else:
             print(plant+" not found in "+self.name)
 
+    @classmethod
     def list_plants(self):
         if len(self.plants) == 0:
             print("no plants in your garden!")
@@ -101,6 +96,7 @@ class Garden:
         print("Your garden has "+str(len(self.plants))+" plants")
         return list(self.plants.keys())
 
+    @classmethod
     def filter_plants(self, field, search):
         filtered_plants = []
         for key, value in self.plants.items():
@@ -110,6 +106,7 @@ class Garden:
         print("Found "+str(len(filtered_plants))+" plants")
         return filtered_plants
 
+    @classmethod
     def clear_plants(self):
         if len(self.plants) == 0:
             print("No plants to remove")
@@ -117,9 +114,18 @@ class Garden:
             self.plants.clear()
             self.minimum_size = self.minimumSize()
 
-    def minimumSize(self):
-        return minimumSizeHelper(self.plants)
+    @classmethod
+    def minimumSize(self, garden):
+        size_needed = 0
+        if len(garden.plants) == 0:
+            return 0
+        else:
+            for plant in garden.plants:
+                print(plant)
+                size_needed+=garden.plants[plant].volume
+        return size_needed
 
+    @classmethod
     def stats(self):
         gRate_average = []
         exp_average = []
@@ -140,7 +146,7 @@ class Garden:
         print(f'Minimum size needed: {self.minimumSize()} square meters')
 
 
-class Plant(Garden):
+class Plant():
     def __init__(self, name, growth_rate, exposure, soil, hardiness, water,
                                                                   height,
                                                                   spread,

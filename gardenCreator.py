@@ -5,11 +5,10 @@ from gardens import *
 import csv
 import random
 
-def createGardenHelper(size, max, feature, val):
-    newGarden = Garden("New Garden")
+def createGardenHelper(garden, size, max, feature, val):
     if feature == '':
-        return newGarden
-    newGarden.maximumSize = size
+        return garden
+    garden.maximumSize = size
     with open('plantList.csv', mode='r') as file:
         csv_reader = csv.reader(file, delimiter=',')
         firstline = True
@@ -25,9 +24,9 @@ def createGardenHelper(size, max, feature, val):
             else:
                 spread = float(row[7])
             if row[val_index] == val:
-                if (newGarden.size+spread) < size:
-                    newGarden.add_plant(row[0])
+                if (garden.size+spread) < size:
+                    garden.add_plant(row[0], garden)
                 else:
-                    return newGarden
-            
-    return newGarden
+                    return garden
+
+    return garden
