@@ -5,6 +5,7 @@ from tkinter.ttk import *
 from PIL import ImageTk, Image
 from gardens import *
 from gardenCreator import *
+from itertools import cycle
 
 garden = Garden()
 
@@ -43,6 +44,15 @@ window.rowconfigure([0,1], minsize=500, weight=1)
 window.columnconfigure([0,1], minsize=500, weight=1)
 
 # methods-----------------------------------------------------------------------
+def show_image(plant_data):
+    for i in frm_image.pack_slaves():
+        i.pack_forget()
+    image = Image.open(f'plantImages/{plant_data[0].replace(" ","")}.jpg')
+    photo = ImageTk.PhotoImage(image)
+    lbl_image = tk.Label(frm_image, image=photo)
+    lbl_image.image = photo
+    lbl_image.pack()
+
 def plantTextFormat(text):
     for w in frm_info.pack_slaves():
         w.pack_forget()
@@ -55,7 +65,9 @@ def plantTextFormat(text):
 def show_data(*args):
     index = lst_plants.curselection()
     plant_data = Garden.searchPlant(lst_plants.get(index[0]).strip())
+    show_image(plant_data)
     plantTextFormat(plant_data)
+
 
 def newGarden(size, max, feature, val):
     newGarden = Garden()
@@ -66,22 +78,11 @@ def newGarden(size, max, feature, val):
     for key, value in garden.plants.items():
         lst_plants.insert(tk.END, key)
 
-# def addPlant_helper(plant):
-#     newPlant = searchPlant(plant)
-#     if newPlant == None:
-#         return None
-#     else:
-#         lst_plants.insert(tk.END, newPlant[0])
-#         return True
-
 def addPlant(plant, garden, *args):
     garden.add_plant(plant, garden)
-    if length1 < length2:
-        lbl_add['text'] = f'{plant} not in database'
-    else:
-        for key, value in garden.plants.items():
-            lst_plants.insert(tk.END, key)
-        lbl_add['text'] = f'{plant} added to garden'
+    for key, value in garden.plants.items():
+        lst_plants.insert(tk.END, key)
+    lbl_add['text'] = f'{plant} added to garden'
 
 def removePlant(plant, garden, *args):
     garden.remove_plant(plant)
@@ -97,7 +98,7 @@ def updateOptions(*args):
 
 def openFile():
     filepath = askopenfilename(
-        filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")]
+        filetypes=[("CSV Files", "*.csv"), ("All Files", "*.*")]
     )
     if not filepath:
         return
@@ -111,8 +112,8 @@ def openFile():
 
 def saveFile():
     filepath = asksaveasfilename(
-        defaultextension="txt",
-        filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")],
+        defaultextension="csv",
+        filetypes=[("CSV Files", "*.csv"), ("All Files", "*.*")],
     )
     if not filepath:
         return
@@ -191,6 +192,8 @@ btn_save.pack()
 
 frm_info = tk.Frame(window)
 
+frm_image = tk.Frame(window)
+
 # gridding----------------------------------------------------------------------
 
 n.grid(row=0, column=0, sticky='nsew')
@@ -198,5 +201,6 @@ n.add(frm_create, text='Create')
 n.add(frm_add, text='Add')
 frm_info.grid(row=1, column=1)
 frm_plants.grid(row=1, column=0)
+frm_image.grid(row=0, column=1)
 
 window.mainloop()

@@ -1,7 +1,11 @@
 from bs4 import BeautifulSoup
 import requests
 from gardens import *
+import urllib.request
+from PIL import ImageTk, Image
 import csv
+import re
+import os, ssl
 
 URL = "https://plantdatabase.kpu.ca/plant/siteIndex"
 BASE_URL = "https://plantdatabase.kpu.ca"
@@ -20,7 +24,8 @@ plant_keys = ['Growth Rate:',
               'Spread:',
               'Colour in Summer:',
               'Colour in Fall:',
-              'Colour (petals):']
+              'Colour (petals):',
+              'Slide Show:']
 
 
 with open('plantList.csv', mode='w') as csv_file:
@@ -29,7 +34,8 @@ with open('plantList.csv', mode='w') as csv_file:
                                                          'spread',
                                                          'colourInSummer',
                                                          'colourInFall',
-                                                         'colourPetals']
+                                                         'colourPetals',
+                                                         'slideShow']
     writer = csv.DictWriter(csv_file, fieldnames= fields)
     writer.writeheader()
 
@@ -50,6 +56,7 @@ with open('plantList.csv', mode='w') as csv_file:
         colourInSummer = ""
         colourInFall = ""
         colourPetals = ""
+        slideShow = ""
         for i in page_info:
             if i.text in plant_keys:
                 if i.text == 'Growth Rate:':
@@ -72,6 +79,21 @@ with open('plantList.csv', mode='w') as csv_file:
                     colourInFall = i.find_next('td').text
                 elif i.text == 'Colour (petals):':
                     colourPetals = i.find_next('td').text
+        imageLink = info.find("div", class_= "slideshow")
+        if imageLink == None:
+            continue
+        imageLink = imageLink.a['href']
+        imagePage = requests.get(BASE_URL+imageLink)
+        imagePageInfo = BeautifulSoup(imagePage.content, 'html.parser')
+        images = imagePageInfo.find_all('img', {'src':re.compile('.jpg')})
+        urlImage = BASE_URL+images[0]['src']
+        if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
+        getattr(ssl, '_create_unverified_context', None)):
+            ssl._create_default_https_context = ssl._create_unverified_context
+        pic = urllib.request.urlretrieve(urlImage,
+                                        f'plantImages/{name.replace(" ","")}.jpg')
+        photo = Image.open(pic[0])
+        slideShow = photo
 
         writer.writerow({'name'          : ' '.join(name.split()),
                         'growth_rate'    : ' '.join(growth_rate.split()),
@@ -83,4 +105,5 @@ with open('plantList.csv', mode='w') as csv_file:
                         'spread'         : spread.split(' ')[-1][:-1],
                         'colourInSummer' : ' '.join(colourInSummer.split()),
                         'colourInFall'   : ' '.join(colourInFall.split()),
-                        'colourPetals'   : ' '.join(colourPetals.split())})
+                        'colourPetals'   : ' '.join(colourPetals.split()),
+                        'slideShow'      : slideShow})

@@ -72,7 +72,8 @@ class Garden:
                                                             plant_info[7],
                                                             plant_info[8],
                                                             plant_info[9],
-                                                            plant_info[10])
+                                                            plant_info[10],
+                                                            plant_info[11])
             garden.plants[plant_info[0]] = new_plant
             garden.minimum_size = garden.minimumSize(garden)
             garden.size+= float(plant_info[7])
@@ -152,7 +153,8 @@ class Plant():
                                                                   spread,
                                                                   colourInSummer,
                                                                   colourInFall,
-                                                                  colourPetals):
+                                                                  colourPetals,
+                                                                  image):
         self.name = name
         self.growth_rate = growth_rate
         self.hardiness = hardiness
@@ -174,8 +176,8 @@ class Plant():
         self.colourPetals = colourPetals
         self.plant_date = datetime.datetime.now()
         self.notes = ""
-        if path.exists("plant patterns/"+name+".jpg"):
-            self.pattern = Image.open("plant patterns/"+name+".jpg")
+        self.image = image
+
 
     def describe(self):
         pprint.pprint(vars(self))
