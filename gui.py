@@ -5,9 +5,9 @@ from tkinter.ttk import *
 from PIL import ImageTk, Image
 from gardens import *
 from gardenCreator import *
+from itertools import cycle
 
-num_plants = 15
-start_garden = createGardenHelper(0,False,'','')
+garden = Garden()
 
 borderEffects = {
     "flat"   : tk.FLAT,
@@ -44,6 +44,15 @@ window.rowconfigure([0,1], minsize=500, weight=1)
 window.columnconfigure([0,1], minsize=500, weight=1)
 
 # methods-----------------------------------------------------------------------
+def show_image(plant_data):
+    for i in frm_image.pack_slaves():
+        i.pack_forget()
+    image = Image.open(f'plantImages/{plant_data[0].replace(" ","")}.jpg')
+    photo = ImageTk.PhotoImage(image)
+    lbl_image = tk.Label(frm_image, image=photo)
+    lbl_image.image = photo
+    lbl_image.pack()
+
 def plantTextFormat(text):
     for w in frm_info.pack_slaves():
         w.pack_forget()
@@ -55,38 +64,31 @@ def plantTextFormat(text):
 
 def show_data(*args):
     index = lst_plants.curselection()
-    plant_data = searchPlant(lst_plants.get(index[0]).strip())
+    plant_data = Garden.searchPlant(lst_plants.get(index[0]).strip())
+    show_image(plant_data)
     plantTextFormat(plant_data)
 
+
 def newGarden(size, max, feature, val):
-    newGarden = createGardenHelper(size, max, feature, val)
+    newGarden = Garden()
+    newGarden = createGardenHelper(newGarden, size, max, feature, val)
+    garden = newGarden
+    del newGarden
     lst_plants.delete(0,tk.END)
-    for key, value in newGarden.plants.items():
+    for key, value in garden.plants.items():
         lst_plants.insert(tk.END, key)
 
-def addPlant_helper(plant):
-    newPlant = searchPlant(plant)
-    if newPlant == None:
-        return None
-    else:
-        lst_plants.insert(tk.END, newPlant[0])
-        return True
+def addPlant(plant, garden, *args):
+    garden.add_plant(plant, garden)
+    for key, value in garden.plants.items():
+        lst_plants.insert(tk.END, key)
+    lbl_add['text'] = f'{plant} added to garden'
 
-def addPlant(plant, *args):
-    newPlant = addPlant_helper(plant)
-    if newPlant == None:
-        lbl_add['text'] = f'{plant} not in database'
-    else:
-        lbl_add['text'] = f'{plant} added to garden'
-
-def use_maxplants(*args):
-    pass
-
-def removePlant(plant, *args):
-    print(plant)
+def removePlant(plant, garden, *args):
+    garden.remove_plant(plant)
 
 def updateOptions(*args):
-    feature = plant_values[feat.get()]
+    feature = Garden.plant_values[feat.get()]
     feat_option.set(feature[0])
     menu = dropDown2['menu']
     menu.delete(0, 'end')
@@ -96,7 +98,7 @@ def updateOptions(*args):
 
 def openFile():
     filepath = askopenfilename(
-        filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")]
+        filetypes=[("CSV Files", "*.csv"), ("All Files", "*.*")]
     )
     if not filepath:
         return
@@ -110,8 +112,8 @@ def openFile():
 
 def saveFile():
     filepath = asksaveasfilename(
-        defaultextension="txt",
-        filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")],
+        defaultextension="csv",
+        filetypes=[("CSV Files", "*.csv"), ("All Files", "*.*")],
     )
     if not filepath:
         return
@@ -129,7 +131,7 @@ lbl_plantName = tk.Label(frm_add, text='Enter plant name: ')
 ent_plant = tk.Entry(frm_add, width=30)
 btn_addPlant = tk.Button(frm_add,
                          text='Add plant',
-                         command= lambda: addPlant(ent_plant.get()))
+                         command= lambda: addPlant(ent_plant.get(), garden))
 lbl_add = tk.Label(frm_add)
 lbl_plantName.pack()
 ent_plant.pack()
@@ -174,7 +176,7 @@ btn_create.pack()
 
 frm_plants = tk.Frame(window)
 lst_plants = tk.Listbox(frm_plants, height=20)
-for key, value in start_garden.plants.items():
+for key, value in garden.plants.items():
     lst_plants.insert(tk.END, key)
 lst_plants.bind('<<ListboxSelect>>', show_data)
 btn_remove = tk.Button(frm_plants,
@@ -190,6 +192,8 @@ btn_save.pack()
 
 frm_info = tk.Frame(window)
 
+frm_image = tk.Frame(window)
+
 # gridding----------------------------------------------------------------------
 
 n.grid(row=0, column=0, sticky='nsew')
@@ -197,5 +201,6 @@ n.add(frm_create, text='Create')
 n.add(frm_add, text='Add')
 frm_info.grid(row=1, column=1)
 frm_plants.grid(row=1, column=0)
+frm_image.grid(row=0, column=1)
 
 window.mainloop()
