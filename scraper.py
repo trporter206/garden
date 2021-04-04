@@ -91,7 +91,7 @@ with open('plantList.csv', mode='w') as csv_file:
         getattr(ssl, '_create_unverified_context', None)):
             ssl._create_default_https_context = ssl._create_unverified_context
         pic = urllib.request.urlretrieve(urlImage,
-                                        f'plantImages/{name.replace(" ","")}.jpg')
+                                        "plantImages/{name}.jpg".format(name=name.replace(" ","")))
         photo = Image.open(pic[0])
         slideShow = photo
 
@@ -101,8 +101,8 @@ with open('plantList.csv', mode='w') as csv_file:
                         'soil'           : ' '.join(soil.split()),
                         'hardiness'      : ' '.join(hardiness.split()),
                         'water'          : ' '.join(water.split()),
-                        'height'         : height.split(' ')[-1][:-1],
-                        'spread'         : spread.split(' ')[-1][:-1],
+                        'height'         :     height.split(' ')[-1][:-1],
+                        'spread'         :     spread.split(' ')[-1][:-1],
                         'colourInSummer' : ' '.join(colourInSummer.split()),
                         'colourInFall'   : ' '.join(colourInFall.split()),
                         'colourPetals'   : ' '.join(colourPetals.split()),

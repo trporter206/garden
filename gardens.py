@@ -50,12 +50,12 @@ class Garden:
     @staticmethod
     def plant_facts(plant):
         plant = searchPlant(plant)
-        print(f"Plant name: {plant[0]}")
-        print(f"Growth rate: {plant[1]}")
-        print(f"Exposure: {plant[2]}")
-        print(f"Soil: {plant[3]}")
-        print(f"Hardiness: {plant[4]}")
-        print(f"Water use: {plant[5]}")
+        print("Plant name: {plant}".format(plant=plant[0]))
+        print("Growth rate: {plant}".format(plant=plant[1]))
+        print("Exposure: {plant}".format(plant=plant[2]))
+        print("Soil: {plant}".format(plant=plant[3]))
+        print("Hardiness: {plant}".format(plant=plant[4]))
+        print("Water use: {plant}".format(plant=plant[5]))
 
     @classmethod
     def add_plant(self, plant, garden):
@@ -77,7 +77,7 @@ class Garden:
             garden.plants[plant_info[0]] = new_plant
             garden.minimum_size = garden.minimumSize(garden)
             garden.size+= float(plant_info[7])
-            # print("Your "+plant+" was added to "+self.name)
+            print("add_plant successful")
 
     @classmethod
     def remove_plant(self, plant):
@@ -139,12 +139,12 @@ class Garden:
             soil_average.append(s_values[value.soil.split(',')[0]])
             hard_average.append(h_values[value.hardiness.split(',')[0]])
             wa_average.append(w_values[value.water.split(',')[0]])
-        print(f'Growth Rate average (0-3): {sum(gRate_average)/len(gRate_average)}')
-        print(f'Exposure average (0-5): {sum(exp_average)/len(exp_average)}')
-        print(f'Soil type average (0-6): {sum(soil_average)/len(soil_average)}')
-        print(f'Hardiness zone average (1-11): {sum(hard_average)/len(hard_average)}')
-        print(f'Water use average (0-6): {sum(wa_average)/len(wa_average)}')
-        print(f'Minimum size needed: {self.minimumSize()} square meters')
+        print('Growth Rate average (0-3): {stat}'.format(stat=sum(gRate_average)/len(gRate_average)))
+        print('Exposure average (0-5): {stat}'.format(stat=sum(exp_average)/len(exp_average)))
+        print('Soil type average (0-6): {stat}'.format(stat=sum(soil_average)/len(soil_average)))
+        print('Hardiness zone average (1-11): {stat}'.format(stat=sum(hard_average)/len(hard_average)))
+        print('Water use average (0-6): {stat}'.format(stat=sum(wa_average)/len(wa_average)))
+        print('Minimum size needed: {stat} square meters'.format(stat=self.minimumSize()))
 
 
 class Plant():

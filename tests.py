@@ -10,28 +10,34 @@ class TestGardenMethods(unittest.TestCase):
         self.garden.add_plant('beautyberry')
 
     def test_addPlant_pass(self):
+        print("Testing: addplant pass")
         self.garden.add_plant('grand fir')
         self.assertEqual(len(self.garden.plants), 4)
 
     def test_addPlant_fail(self):
+        print("Testing: addplant fail")
         self.garden.add_plant('fake plant')
         self.assertEqual(len(self.garden.plants), 3)
 
     def test_removePlant_pass(self):
+        print("Testing: removeplant pass")
         self.garden.remove_plant('Korean fir')
         self.assertEqual(len(self.garden.plants), 2)
 
     def test_removePlant_fail(self):
+        print("Testing: removeplant fail")
         self.garden.remove_plant('fake fir')
         self.assertEqual(len(self.garden.plants), 3)
 
     def test_filterplants(self):
+        print("Testing: filterplants")
         f1 = self.garden.filter_plants('name', 'Korean fir')
         self.assertEqual(len(f1), 1)
         f2 = self.garden.filter_plants('water','Moderate')
         self.assertEqual(len(f2), 2)
 
     def test_clearplants(self):
+        print("Testing: clearplants")
         self.garden.clear_plants()
         self.assertEqual(len(self.garden.plants), 0)
 

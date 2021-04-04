@@ -70,19 +70,23 @@ def show_data(*args):
 
 
 def newGarden(size, max, feature, val):
+
     newGarden = Garden()
     newGarden = createGardenHelper(newGarden, size, max, feature, val)
     garden = newGarden
     del newGarden
     lst_plants.delete(0,tk.END)
     for key, value in garden.plants.items():
+        print(key, value)
         lst_plants.insert(tk.END, key)
 
 def addPlant(plant, garden, *args):
+    plant_num = len(garden.plants)
     garden.add_plant(plant, garden)
-    for key, value in garden.plants.items():
-        lst_plants.insert(tk.END, key)
-    lbl_add['text'] = f'{plant} added to garden'
+    new_plant_num = len(garden.plants)
+    if new_plant_num > plant_num:
+        lst_plants.insert(tk.END, list(garden.plants.keys())[-1])
+        lbl_add['text'] = f'{plant} added to garden'
 
 def removePlant(plant, garden, *args):
     garden.remove_plant(plant)
